@@ -50,12 +50,16 @@ console.log(a) */
 
 //////////////////////////reducer/////////////////////////////////////
 
-function reduce(arr, callback, startValue) {
-  var result = startValue;
+function reduce (arr, callback, initialVal) {
+  let accumulator = (initialVal === undefined) ? undefined : initialVal;
+
   for (let i = 0; i < arr.length; i++) {
-    result = callback(result, arr[i], i, arr);
+    if (accumulator !== undefined)
+      accumulator = callback(accumulator, arr[i], i);
+    else
+      accumulator = arr[i];
   }
-  return result;
+  return accumulator;
 };
 
 const arrs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
@@ -72,18 +76,46 @@ const arrResults = reduce(arrs, function (result, current) {
 console.log(strResults);
 console.log(arrResults);
 
+///////////////////////////splice////////////////////////////////////
+
+
+
+
 ///////////////////////////deepClone////////////////////////////////////
 
-function deepClon(dest, obj) {
-  for (let key in obj) {
-    if ((typeof obj[key]) === "object" || "array") {
-      dest[key] = deepClon({}, obj[key]);
-    } else {
-      dest[key] = obj[key];
+const obj = {
+  fullname: 'Ss Dd Ff',
+  age: 20,
+  location: {
+    contry: 'Ukraine',
+    city: 'Kyiv',
+  },
+  jobs: {
+    position: 'Front-end Development',
+    salerty: '$1000',
+    location: {
+      contry: 'Ukraine',
+      city: 'Kyiv'
     }
   }
-  return dest;
 }
+
+function deepClon(obj) {
+  let dest = obj;
+    if(dest && typeof obj == "object") {
+        dest = obj instanceof Array ? [] : {};
+        for(let key in obj)
+            if(obj.hasOwnProperty(key))
+                dest[key] = deepClon(obj[key]);
+    }
+    return dest;
+}
+obj.fullname = 'Bas9'
+console.log(obj)
+
+const objClon = deepClon(obj);
+objClon.jobs.location.city = 'oslo'
+console.log(objClon);
 
 ///////////////////////////memoizer////////////////////////////////////
 
