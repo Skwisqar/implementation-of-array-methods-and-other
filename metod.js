@@ -132,10 +132,9 @@ function memoizer(fn) {
 
 ///////////////////////////splice////////////////////////////////////
 
-const arch = [1, 'pur', 3, 4, 'Oslo','Salo', 9];
-
+const arch = [1, 'pur', 3];
+//, 4, true,'Salo', 9, 'qwerq'
 function splice(array, index, deleteCount, ...replace) {
-  console.log(arguments)
   if (arguments.length === 1) {
     array.length--
   } else if (arguments.length === 2) {
@@ -148,17 +147,23 @@ function splice(array, index, deleteCount, ...replace) {
       index++;
       deleteCount--
     }
-  } else if (arguments.length >= 4) {
+  } else if (replace.length > 0) {
     while (deleteCount > 0) {
       delete array[index];
       index++;
       deleteCount--
     }
-    array.push(...replace);
+    const newArr = array.slice(index);
+    console.log(newArr)
+    console.log(array)
+    replace.forEach((e, i) => array[index + i] = e );
+    newArr.forEach((e, i) => array[index + replace.length + i] = e);
+    console.log(array);
+    array.concat(newArr)
   }
 }
 
+//http://www.oooo.plus/crop.php
 
-
-splice(arch, 2, 5, 'ssddf', 'qwerty');
+splice(arch, 1, 0, 'ssddf', 'qwerty', true, false, {});
 console.log(arch);
