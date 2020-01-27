@@ -119,15 +119,46 @@ console.log(objClon);
 
 ///////////////////////////memoizer////////////////////////////////////
 
-function memoizer(fun){
-    let cache = {}
-    return function (n){
-        if (cache[n] != undefined ) {
-          return cache[n]
-        } else {
-          let result = fun(n)
-          cache[n] = result
-          return result
-        }
+function memoizer(fn) {
+  const cache = {};
+
+  return function(n) {
+    if (n in cache) {
+      return cache[n];
     }
+    return (cache[n] = fn(n));
+  };
 }
+
+///////////////////////////splice////////////////////////////////////
+
+const arch = [1, 'pur', 3, 4, 'Oslo','Salo', 9];
+
+function splice(array, index, deleteCount, ...replace) {
+  console.log(arguments)
+  if (arguments.length === 1) {
+    array.length--
+  } else if (arguments.length === 2) {
+    for (let i = index; i < array.length; i) {
+      array.length--
+    }
+  } else if (arguments.length === 3) {
+    while (deleteCount > 0) {
+      delete array[index];
+      index++;
+      deleteCount--
+    }
+  } else if (arguments.length >= 4) {
+    while (deleteCount > 0) {
+      delete array[index];
+      index++;
+      deleteCount--
+    }
+    array.push(...replace);
+  }
+}
+
+
+
+splice(arch, 2, 5, 'ssddf', 'qwerty');
+console.log(arch);
