@@ -118,52 +118,68 @@ objClon.jobs.location.city = 'oslo'
 console.log(objClon);
 
 ///////////////////////////memoizer////////////////////////////////////
+//
+const argKey = x => x.toString() + ':' + typeof x;
+const generateKey = args => args.map(argKey).join('|');
 
 function memoizer(fn) {
-  const cache = {};
-
-  return function(n) {
-    if (n in cache) {
-      return cache[n];
-    }
-    return (cache[n] = fn(n));
+  const cache = {}
+  return (...args) => {
+    const key = generateKey(args)
+    const val = cache[key]
+    if (val) return val;
+    const res = fn(...args);
+    cache[key] = res;
+    return res;
   };
-}
+};
 
+//memoizer(deepClon)
 ///////////////////////////splice////////////////////////////////////
 
-const arch = [1, 'pur', 3];
+const arch = [1, 'pur', 3, 'ssddf', 'qwerty', true, false, {}];
 //, 4, true,'Salo', 9, 'qwerq'
+//, 'ssddf', 'qwerty', true, false, {}
 function splice(array, index, deleteCount, ...replace) {
-  if (arguments.length === 1) {
-    array.length--
-  } else if (arguments.length === 2) {
+  console.log(index);
+  if (index === undefined) {array.length--}
+
+  if (index !== undefined && deleteCount === undefined) {
     for (let i = index; i < array.length; i) {
-      array.length--
+      array.length--;
     }
-  } else if (arguments.length === 3) {
-    while (deleteCount > 0) {
-      delete array[index];
-      index++;
-      deleteCount--
-    }
-  } else if (replace.length > 0) {
-    while (deleteCount > 0) {
-      delete array[index];
-      index++;
-      deleteCount--
-    }
+  } 
+  if (deleteCount !== undefined) {
+    const newArr = array.slice(index + deleteCount);
+    array.length = index;
+    newArr.forEach((e, i) => (array[index + i] = e));
+  } 
+  if (replace.length > 0) {
     const newArr = array.slice(index);
-    console.log(newArr)
-    console.log(array)
-    replace.forEach((e, i) => array[index + i] = e );
-    newArr.forEach((e, i) => array[index + replace.length + i] = e);
-    console.log(array);
-    array.concat(newArr)
+    replace.concat(newArr).forEach((e, i) => (array[index + i] = e));
   }
 }
 
-//http://www.oooo.plus/crop.php
 
-splice(arch, 1, 0, 'ssddf', 'qwerty', true, false, {});
+splice(arch, 2, 3, 'kakapuka');
 console.log(arch);
+/////////////////////////Utils/////////////////////////////////////
+const LOOP_COUNT = 10000;
+
+const speedTest = (name, fn, args, count) => {
+  const tmp =[];
+  const start = new Date().getTime();
+  for(let i = 0; i < count; i++) {
+    tmp.push(fn(...args));
+  }
+  const end = new Date().getTime();
+  const time = end - start;
+  console.log(`${name} * ${tmp.length} : ${time}`);
+};
+
+///////////////////////fib/////////////////////////////////////////
+const fib = n => (n <= 2 ? 1 : fib(n - 1) + fib(n - 2));
+const mFib = memoizer(fib)
+
+speedTest("fib(20)", fib, [20], LOOP_COUNT);
+speedTest("memoizer fib(20)", mFib, [20], LOOP_COUNT);
