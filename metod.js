@@ -73,8 +73,8 @@ const arrResults = reduce(arrs, function (result, current) {
   return result.concat(current);
 }, []);
 
-console.log(strResults);
-console.log(arrResults);
+//console.log(arrResults);
+//console.log(strResults);
 
 ///////////////////////////splice////////////////////////////////////
 
@@ -111,28 +111,29 @@ function deepClon(obj) {
     return dest;
 }
 obj.fullname = 'Bas9'
-console.log(obj)
+//console.log(obj)
 
 const objClon = deepClon(obj);
 objClon.jobs.location.city = 'oslo'
-console.log(objClon);
+//console.log(objClon);
 
 ///////////////////////////memoizer////////////////////////////////////
-//
-const argKey = x => x.toString() + ':' + typeof x;
-const generateKey = args => args.map(argKey).join('|');
 
 function memoizer(fn) {
-  const cache = {}
+  const cache = { argKey: [], results: undefined };
   return (...args) => {
-    const key = generateKey(args)
-    const val = cache[key]
-    if (val) return val;
+    if (cache.argKey.length == args.length && cache.argKey.every((v, i) => v === args[i])) {
+      console.log("load");
+      return cache.results;
+    };
     const res = fn(...args);
-    cache[key] = res;
+    cache.argKey = args;
+    cache.results = res;
+    console.log('save')
     return res;
   };
 };
+
 
 //memoizer(deepClon)
 ///////////////////////////splice////////////////////////////////////
@@ -141,7 +142,6 @@ const arch = [1, 'pur', 3, 'ssddf', 'qwerty', true, false, {}];
 //, 4, true,'Salo', 9, 'qwerq'
 //, 'ssddf', 'qwerty', true, false, {}
 function splice(array, index, deleteCount, ...replace) {
-  console.log(index);
   if (index === undefined) {array.length--}
 
   if (index !== undefined && deleteCount === undefined) {
@@ -162,9 +162,9 @@ function splice(array, index, deleteCount, ...replace) {
 
 
 splice(arch, 2, 3, 'kakapuka');
-console.log(arch);
+//console.log(arch);
 /////////////////////////Utils/////////////////////////////////////
-const LOOP_COUNT = 10000;
+const LOOP_COUNT = 5;
 
 const speedTest = (name, fn, args, count) => {
   const tmp =[];
@@ -179,7 +179,9 @@ const speedTest = (name, fn, args, count) => {
 
 ///////////////////////fib/////////////////////////////////////////
 const fib = n => (n <= 2 ? 1 : fib(n - 1) + fib(n - 2));
-const mFib = memoizer(fib)
+const sum = (a, b, c) => (a + b + c );
 
-speedTest("fib(20)", fib, [20], LOOP_COUNT);
-speedTest("memoizer fib(20)", mFib, [20], LOOP_COUNT);
+const mSum = memoizer(sum)
+console.log(sum(5,5,5))
+//speedTest("sum(5, 5, 5)", sum, [5, 5, 5], LOOP_COUNT);
+speedTest("memoizer sum(5, , 5)", mSum, [5, 5, 5], LOOP_COUNT);
