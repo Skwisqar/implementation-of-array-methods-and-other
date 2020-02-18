@@ -1,4 +1,26 @@
-/////////////Реализация метода массива////////////////
+/////////////Реализация метода массива////////////////\
+//////////////flat/////////////////
+
+function flat(array, depth = 0) { 
+ if (depth < 1 || !Array.isArray(array)) {
+   return array;
+ }
+
+ return reduce(
+   array,
+   (result, current) => {
+     return concat(result, flat(current, depth - 1));
+   },
+   [],
+ );
+}
+
+//////////////flatMap/////////////////
+
+function flatMap(array, callback) {
+ return flat(map(array, callback), 1);
+}
+
 //////////////forEach/////////////////
 
 /* const array = ['JavaScript', 'is', 'awesome'];
@@ -75,11 +97,6 @@ const arrResults = reduce(arrs, function (result, current) {
 
 //console.log(arrResults);
 //console.log(strResults);
-
-///////////////////////////splice////////////////////////////////////
-
-
-
 
 ///////////////////////////deepClone////////////////////////////////////
 
